@@ -1,0 +1,139 @@
+@mixin changeColor() {
+  color: var(--btn-color);
+  border-color: var(--btn-color);
+}
+
+@mixin disabled() {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@mixin default() {
+  border: 1px solid var(--border-color);
+  --wave-color: #41b983;
+  // focus-within属性 后代元素获取到了焦点 则会变成默认主题色
+  &:not([disabled]):hover,
+  &:not([disabled]):focus-within {
+    @include changeColor()
+  }
+
+}
+
+@mixin primary() {
+  color: var(--color);
+  background-color: var(--btn-color);
+
+}
+
+
+.btn {
+  --wave-color: #fff;
+  --btn-color: #41b983;
+  --color: #fff;
+  --border-color: #dee2e6;
+
+  --danger-color: #ee8079;
+
+  --bg-color: #fff;
+
+  --flat-disabled-color: #3ecd79a8;
+}
+
+
+.btn {
+  display: inline-block;
+  position: relative;
+  padding: 0.5em 1em;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: unset;
+  user-select: none;
+  border: none;
+  outline: none;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  transition: all 0.3s;
+  overflow: hidden;
+
+  @include changeColor();
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    background: var(--bg-color);
+    transition: opacity 0.3s;
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: var(--x, 0);
+    top: var(--y, 0);
+    pointer-events: none;
+    background-image: radial-gradient(
+                    circle,
+                    var(--wave-color, #fff) 10%,
+                    transparent 10.01%
+    );
+    background-repeat: no-repeat;
+    background-position: 50%;
+    // scale关键
+    transform: translate(-50%, -50%) scale(10);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.8s;
+  }
+
+  &:not([disabled]):active::after {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.3;
+    transition: 0s;
+  }
+
+  &:not([disabled]):active::before {
+    opacity: 0.2;
+  }
+
+  &__default {
+    @include default();
+  }
+
+  &__primary {
+    @include primary();
+  }
+
+  &__dashed {
+    @include default();
+    border: 1px dashed var(--border-color);
+  }
+
+  &__danger {
+    --btn-color: var(--danger-color);
+    @include primary();
+
+  }
+
+  &__flat {
+    transition: color 0.3s, background-color 0.5s;
+
+    &:not([disabled]):hover {
+      color: var(--flat-disabled-color);
+      @include primary();
+    }
+  }
+
+  &--disabled {
+    @include disabled()
+  }
+
+}
