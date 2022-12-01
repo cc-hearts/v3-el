@@ -1,3 +1,6 @@
 export { default as Table } from './ele/table.vue'
-export { default as tableView } from './ele/tableView.vue'
+export { default as TableView } from './ele/tableView.vue'
 export { default as Drawer } from './ele/drawer.vue'
+export { default as TableOperation } from './ele/tableOperation.vue'
+export { default as Dialog } from './ele/dialog.vue'
+export { default as FormWrapper } from './ele/formWrapper.vue'
