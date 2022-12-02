@@ -6,15 +6,27 @@
 
 <script setup lang="ts">
 import { Dialog, FormWrapper } from '@/feature/index'
-import { useInitFormProps } from '@/hooks/index'
+import { useInitFormProps, useWatchDialogHiddenClear, useEchoFormDialogData } from '@/hooks/index'
 import { ref } from 'vue'
 import type { formInstance } from '@/types/index'
-import { addDict } from '@/apis/dict'
+import { addDict, updateDict } from '@/apis/dict'
 import { successTip } from '@/utils'
-const props = withDefaults(defineProps<{ title: string; modelValue: boolean; row: Record<string, unknown> | null; width?: string; cancelText?: string; submitText?: string }>(), {
-  modelValue: false,
-  row: null
-})
+const props = withDefaults(
+  defineProps<{
+    title: string
+    modelValue: boolean
+    row: Record<string, unknown> | null
+    width?: string
+    type?: 'add' | 'edit'
+    cancelText?: string
+    submitText?: string
+  }>(),
+  {
+    modelValue: false,
+    row: null,
+    type: 'add'
+  }
+)
 
 const form = ref<formInstance | null>(null)
 
@@ -28,10 +40,22 @@ const emits = defineEmits(['cancel', 'refresh'])
 function handleCancel() {
   emits('cancel')
 }
+useWatchDialogHiddenClear(() => props.modelValue, false, formProps.mode, { status: true })
+
+useEchoFormDialogData(
+  () => props.type,
+  'edit',
+  formProps.mode,
+  () => props.row || {},
+  { status: (num) => Boolean(num) }
+)
 
 function handleSubmit() {
   form.value?.handleSubmit().then(() => {
-    addDict(Object.assign({}, formProps.mode, { status: Number(formProps.mode.status) })).then((res) => {
+    const isEdit = !!(props.type === 'edit')
+    ;(isEdit ? updateDict : addDict)(
+      Object.assign({}, formProps.mode, { status: Number(formProps.mode.status), id: isEdit ? props.row?.id : void 0 })
+    ).then((res) => {
       successTip(res.message)
       emits('refresh')
       handleCancel()

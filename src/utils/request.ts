@@ -9,7 +9,6 @@ enum requestType {
 const successCode = [200, 0]
 export type params = Record<string, any>
 type postType = 'application/x-www-form-urlencoded' | 'application/json' | 'multipart/form-data'
-// type requestBodyType = ArrayBuffer | Blob | FormData | string | Record<string, any>
 const urlArray = ['http://localhost:3363/']
 const baseUrl = urlArray[0]
 
@@ -17,6 +16,7 @@ function isSpecifyResponseType(contentType: string, reg: RegExp): boolean {
   return reg.test(contentType)
 }
 // TODO: Blob ArrayBuffer formData 的判断
+// type requestBodyType = ArrayBuffer | Blob | FormData | string | Record<string, any>
 // function isResponseText(contentType: string): boolean {
 //   return isSpecifyResponseType(contentType, /text\/html/)
 // }
@@ -78,34 +78,59 @@ function requestMethod<T>(url: string, type: requestType, requestInit: RequestIn
   return request(url, Object.assign({ method: type }, requestInit))
 }
 
-export function Get<T = any, U extends params = params>(url: string, params?: U, requestInit: RequestInit = {}): Promise<BaseResponse<T>> {
-  let enCodeParams = objectToParams(params)
-  enCodeParams = enCodeParams.trim() !== '' ? `?${enCodeParams}` : ''
-  const fullPath = url + enCodeParams
-  return requestMethod(fullPath, requestType.GET, requestInit)
-}
-
-function postRequest<T>(url: string, requestInit: RequestInit = {}, ContentType?: postType): Promise<BaseResponse<T>> {
+function forwardRequest<T>(url: string, requestInit: RequestInit = {}, ContentType?: postType, type?: requestType): Promise<BaseResponse<T>> {
   requestInit.headers = Object.assign({}, requestInit.headers || {}, {
     'Content-Type': ContentType
   })
-  return request(url, Object.assign({ method: requestType.POST }, requestInit))
+  return request(url, Object.assign({ method: type || requestType.POST }, requestInit))
 }
 
-export function Post<T = undefined, U extends params = params>(url: string, params?: U, requestInit: RequestInit = {}): Promise<BaseResponse<T>> {
+function getFullPath(params: params | undefined, url: string): string {
+  let enCodeParams = objectToParams(params)
+  enCodeParams = enCodeParams.trim() !== '' ? `?${enCodeParams}` : ''
+  return url + enCodeParams
+}
+
+function forwardObject(params: params | undefined, requestInit: RequestInit = {}) {
   try {
     requestInit.body = JSON.stringify(params)
   } catch (err) {
     console.log('Post params error:', err)
   }
-  return postRequest(url, requestInit, 'application/json')
+}
+
+export function Get<T, U extends params = params>(url: string, params?: U, requestInit: RequestInit = {}): Promise<BaseResponse<T>> {
+  const fullPath = getFullPath(params, url)
+  return requestMethod(fullPath, requestType.GET, requestInit)
+}
+
+export function Post<T, U extends params = params>(url: string, params?: U, requestInit: RequestInit = {}): Promise<BaseResponse<T>> {
+  forwardObject(params, requestInit)
+  return forwardRequest(url, requestInit, 'application/json')
+}
+export function Put<T, U extends params = params>(url: string, params?: U, requestInit: RequestInit = {}): Promise<BaseResponse<T>> {
+  forwardObject(params, requestInit)
+  return forwardRequest(url, requestInit, 'application/json', requestType.PUT)
+}
+
+export function Delete<T, U extends params = params>(url: string, params?: U, requestInit: RequestInit = {}): Promise<BaseResponse<T>> {
+  const fullPath = getFullPath(params, url)
+  return requestMethod(fullPath, requestType.DELETE, requestInit)
 }
 
 export function FormDataPost<T>(url: string, params?: params, requestInit: RequestInit = {}): Promise<BaseResponse<T>> {
   // formData形式
-  return postRequest(url, requestInit, 'application/x-www-form-urlencoded')
+  const fullPath = getFullPath(params, url)
+  return forwardRequest(fullPath, requestInit, 'application/x-www-form-urlencoded')
 }
 export function MultiPost<T>(url: string, params?: params, requestInit: RequestInit = {}): Promise<BaseResponse<T>> {
   // new FormData形式
-  return postRequest(url, requestInit, 'multipart/form-data')
+  const formData = new FormData()
+  if (params) {
+    Object.keys(params).forEach((key) => {
+      formData.append(key, params[key])
+    })
+  }
+  requestInit.body = formData
+  return forwardRequest(url, requestInit, 'multipart/form-data')
 }

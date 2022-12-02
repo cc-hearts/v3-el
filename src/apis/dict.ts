@@ -1,5 +1,5 @@
 import { paginationBase } from '@/types'
-import { Get, Post } from '@/utils/request'
+import { Get, Post, Delete, Put } from '@/utils/request'
 import type { requestTableData } from '@/types/baseResponse'
 import { addDictInstance } from '@/types/dict'
 const token = '97ffdff3e77875bdfb7e5abebba97392'
@@ -33,4 +33,44 @@ export function addDictMap(data) {
       token: token
     }
   })
+}
+
+export function updateDict(data) {
+  return Put(`api/dict/updateDict`, data, {
+    headers: {
+      token: token
+    }
+  })
+}
+
+export function updateDictMap(data) {
+  return Put(`api/dict/updateDictMap`, data, {
+    headers: {
+      token: token
+    }
+  })
+}
+
+export function deleteDict(id: number) {
+  return Delete(
+    `api/dict/deleteDict/${id}`,
+    {},
+    {
+      headers: {
+        token: token
+      }
+    }
+  )
+}
+
+export function deleteDictMap(id: number) {
+  return Delete(
+    `api/dict/deleteDictMap/${id}`,
+    {},
+    {
+      headers: {
+        token: token
+      }
+    }
+  )
 }

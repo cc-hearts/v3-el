@@ -1,8 +1,20 @@
-import { reactive } from 'vue'
+import { callback } from '@/types/base'
+import { reactive, watch } from 'vue'
+
+type dialogType = 'add' | 'edit'
 const useInitDialogProps = (title: string, width?: string, cancelText?: string, submitText?: string) => {
-  const data: { title: string; modelValue: boolean; row: Record<string, unknown> | null; width?: string; cancelText?: string; submitText?: string } = {
+  const data: {
+    title: string
+    modelValue: boolean
+    row: Record<string, unknown> | null
+    type: dialogType
+    width?: string
+    cancelText?: string
+    submitText?: string
+  } = {
     title,
     modelValue: false,
+    type: 'add',
     row: null
   }
   //TODO: 待优化
@@ -21,8 +33,9 @@ const useInitDialogProps = (title: string, width?: string, cancelText?: string, 
     dialogProps.modelValue = !dialogProps.modelValue
   }
 
-  function handleChange(title: string, row: typeof data['row'] = null): void {
+  function handleChange(title: string = '', type: dialogType = 'add', row: typeof data['row'] = null): void {
     dialogProps.title = title
+    dialogProps.type = type
     dialogProps.row = row
   }
 
@@ -32,11 +45,22 @@ const useInitDialogProps = (title: string, width?: string, cancelText?: string, 
   }
 
   function handleDialogEdit(title: string, row: Record<string, unknown>): void {
-    handleChange(title, row)
+    handleChange(title, 'edit', row)
     toggleDialogVisible()
   }
 
-  return { dialogProps, toggleDialogVisible, handleDialogAdd, handleDialogEdit }
+  function watchHiddenInitStatus(callback: callback = handleChange) {
+    watch(
+      () => dialogProps.modelValue,
+      (bool) => {
+        if (!bool) {
+          callback()
+        }
+      }
+    )
+  }
+
+  return { dialogProps, toggleDialogVisible, handleDialogAdd, handleDialogEdit, watchHiddenInitStatus }
 }
 
 export default useInitDialogProps

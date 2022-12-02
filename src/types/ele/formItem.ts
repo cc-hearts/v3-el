@@ -3,6 +3,7 @@ export interface formItem {
   field: string
   label: string
   type: 'input' | string
+  disabled?: boolean
   placeholder?: string
 }
 

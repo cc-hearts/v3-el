@@ -7,7 +7,7 @@
     <template #operation="{ row }">
       <div>
         <el-button type="success" size="small" @click="handleChange('字典项管理', row)">字典项管理</el-button>
-        <TableOperation @edit="handleDialogEdit('编辑字典', row)" @delete="handleDelete(row)" />
+        <TableOperation :width="180" title="是否删除该字典项？" @edit="handleDialogEdit('编辑字典', row)" @delete="handleDelete(row)" />
       </div>
     </template>
   </TableView>
@@ -19,13 +19,14 @@
 import { Button } from '@/components/index'
 
 import { useInitPagination, useAddRow } from '@/hooks/index'
-import { getDictList } from '@/apis/dict'
+import { deleteDict, getDictList } from '@/apis/dict'
 import { onMounted, reactive, ref } from 'vue'
 import AddDictMapDrawer from '@/pages/dict/components/addDictMapDrawer.vue'
 import AddDictDialog from '@/pages/dict/components/addDictDialog.vue'
 import TableView from '@/feature/ele/tableView.vue'
 import { TableOperation } from '@/feature/index'
 import { useInitDrawerProps, useInitDialogProps } from '@/hooks/index'
+import { successTip } from './utils'
 // import { useCounterStore } from './store/test'
 // const counterInstance = useCounterStore()
 // counterInstance.increment()
@@ -40,7 +41,9 @@ const tableData = reactive<any>({
 })
 
 const { drawerProps, toggleDrawerVisible, handleChange } = useInitDrawerProps('字典项管理')
-const { dialogProps, toggleDialogVisible, handleDialogAdd, handleDialogEdit } = useInitDialogProps('新增字典')
+const { dialogProps, toggleDialogVisible, handleDialogAdd, handleDialogEdit, watchHiddenInitStatus } = useInitDialogProps('新增字典')
+
+watchHiddenInitStatus()
 function getData() {
   getDictList(searchObj).then((res) => {
     if (res.data) {
@@ -65,7 +68,12 @@ function handleChangeSwitch(bool: boolean, data: typeof tableData['list']) {
   data.status = Number(bool)
 }
 
-function handleDelete(data) {}
+function handleDelete({ id }: { id: number }) {
+  deleteDict(id).then((res) => {
+    successTip(res.message)
+    refreshPages()
+  })
+}
 </script>
 
 <style></style>

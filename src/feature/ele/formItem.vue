@@ -1,5 +1,11 @@
 <template>
-  <el-input v-if="item.type === 'input'" :model-value="value" @update:modelValue="forwardEvent" :placeholder="placeholder" />
+  <el-input
+    v-if="item.type === 'input'"
+    :model-value="value"
+    @update:modelValue="forwardEvent"
+    :placeholder="placeholder"
+    :disabled="item.disabled"
+  />
   <el-switch v-else-if="item.type === 'switch'" :model-value="value" @update:modelValue="forwardEvent" />
 </template>
 

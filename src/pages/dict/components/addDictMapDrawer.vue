@@ -6,10 +6,10 @@
         <el-switch :model-value="Boolean(row.status)" @change="handleChangeSwitch($event, row)" />
       </template>
       <template #operation="{ row }">
-        <TableOperation @edit="handleDialogEdit('编辑字典项', row)" @delete="handleDelete(row)" />
+        <TableOperation title="是否删除该字典项" @edit="handleDialogEdit('编辑字典项', row)" @delete="handleDelete(row)" />
       </template>
     </TableView>
-    <AddDictMapDialog v-bind="dialogProps" @cancel="toggleDialogVisible" @refresh="refreshSysDictMapList" />
+    <AddDictMapDialog v-bind="dialogProps" :code="(props.row?.code as string)" @cancel="toggleDialogVisible" @refresh="refreshSysDictMapList" />
   </Drawer>
 </template>
 
@@ -18,10 +18,11 @@ import { Drawer } from '@/feature/index'
 import { useToggleVisible } from '@/hooks/ele/useToggleVisible'
 import { Button } from '@/components/index'
 import { TableOperation, TableView } from '@/feature/index'
-import { useInitDialogProps, useInitPagination } from '@/hooks'
+import { useAddRow, useInitDialogProps, useInitPagination } from '@/hooks'
 import { reactive, watch } from 'vue'
-import { getDictMapList } from '@/apis/dict'
+import { deleteDictMap, getDictMapList } from '@/apis/dict'
 import AddDictMapDialog from './addDictMapDialog.vue'
+import { successTip } from '@/utils'
 const props = withDefaults(defineProps<{ modelValue: boolean; row: Record<string, unknown> | null }>(), {
   modelValue: false,
   row: null
@@ -41,6 +42,7 @@ function getData() {
     getDictMapList(Object.assign({}, searchObj, { dictKey })).then((res) => {
       if (res.data) {
         const { list, total, columns } = res.data
+        useAddRow(columns)
         tableData.list = list
         tableData.total = total
         tableData.columns = columns
@@ -48,7 +50,6 @@ function getData() {
     })
   }
 }
-
 watch(
   () => props.modelValue,
   (bool) => {
@@ -68,13 +69,18 @@ function refreshSysDictMapList() {
 const emits = defineEmits(['update:modelValue'])
 const toggleVisible = useToggleVisible(emits, props)
 
-const { dialogProps, toggleDialogVisible, handleDialogAdd, handleDialogEdit } = useInitDialogProps('新增字典项')
-
+const { dialogProps, toggleDialogVisible, handleDialogAdd, handleDialogEdit, watchHiddenInitStatus } = useInitDialogProps('新增字典项')
+watchHiddenInitStatus()
 function handleChangeSwitch(bool: boolean, data: typeof tableData['list']) {
   data.status = Number(bool)
 }
 
-function handleDelete(data) {}
+function handleDelete({ id }: { id: number }) {
+  deleteDictMap(id).then((res) => {
+    successTip(res.message)
+    refreshSysDictMapList()
+  })
+}
 </script>
 
 <style></style>

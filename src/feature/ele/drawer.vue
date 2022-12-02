@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { useToggleVisible } from '@/hooks/ele/useToggleVisible'
-const props = withDefaults(defineProps<{ modelValue: boolean; title: string; appendToBody: boolean }>(), {
+const props = withDefaults(defineProps<{ modelValue: boolean; title?: string; appendToBody: boolean }>(), {
   modelValue: false,
   title: '',
   appendToBody: false
