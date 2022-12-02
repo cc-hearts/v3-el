@@ -19,8 +19,8 @@
 import { Button } from '@/components/index'
 
 import { useInitPagination, useAddRow } from '@/hooks/index'
-import { deleteDict, getDictList } from '@/apis/dict'
-import { onMounted, reactive, ref } from 'vue'
+import { deleteDict, getDictList, updateDict } from '@/apis/dict'
+import { onMounted, reactive } from 'vue'
 import AddDictMapDrawer from '@/pages/dict/components/addDictMapDrawer.vue'
 import AddDictDialog from '@/pages/dict/components/addDictDialog.vue'
 import TableView from '@/feature/ele/tableView.vue'
@@ -65,7 +65,10 @@ function refreshPages() {
 }
 
 function handleChangeSwitch(bool: boolean, data: typeof tableData['list']) {
-  data.status = Number(bool)
+  updateDict({ id: data.id, status: Number(bool) }).then((res) => {
+    successTip(res.message)
+    getData()
+  })
 }
 
 function handleDelete({ id }: { id: number }) {

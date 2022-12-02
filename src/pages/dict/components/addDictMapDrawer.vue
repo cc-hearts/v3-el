@@ -20,7 +20,7 @@ import { Button } from '@/components/index'
 import { TableOperation, TableView } from '@/feature/index'
 import { useAddRow, useInitDialogProps, useInitPagination } from '@/hooks'
 import { reactive, watch } from 'vue'
-import { deleteDictMap, getDictMapList } from '@/apis/dict'
+import { deleteDictMap, getDictMapList, updateDictMap } from '@/apis/dict'
 import AddDictMapDialog from './addDictMapDialog.vue'
 import { successTip } from '@/utils'
 const props = withDefaults(defineProps<{ modelValue: boolean; row: Record<string, unknown> | null }>(), {
@@ -71,8 +71,12 @@ const toggleVisible = useToggleVisible(emits, props)
 
 const { dialogProps, toggleDialogVisible, handleDialogAdd, handleDialogEdit, watchHiddenInitStatus } = useInitDialogProps('新增字典项')
 watchHiddenInitStatus()
+
 function handleChangeSwitch(bool: boolean, data: typeof tableData['list']) {
-  data.status = Number(bool)
+  updateDictMap({ id: data.id, status: Number(bool) }).then((res) => {
+    successTip(res.message)
+    getData()
+  })
 }
 
 function handleDelete({ id }: { id: number }) {
