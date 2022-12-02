@@ -1,6 +1,31 @@
-@mixin changeColor() {
-  color: var(--btn-color);
-  border-color: var(--btn-color);
+@use '@/assets/scss/variables/_variable.scss';
+
+.btn {
+  --flat-disabled-color: #3ecd79a8;
+  --bg-color: var(--#{variable.$prefix}-full-white);
+  --btn-color-dark: var(--#{variable.$prefix}-btn-color-dark);
+  --btn-color-white: var(--#{variable.$prefix}-btn-color-white);
+  --btn-primary-color: var(--#{variable.$prefix}-btn-primary);
+
+  --btn-bgc-color-success: var(--#{variable.$prefix}-btn-bgc-color-success);
+  --btn-bgc-color-danger: var(--#{variable.$prefix}-btn-bgc-color-danger);
+  --btn-bgc-color-default: var(,transparent);
+
+  --btn-primary-active-color: var(--#{variable.$prefix}-full-white);
+  --btn-danger-active-color: var(--#{variable.$prefix}-full-white);
+  --btn-border-default-color: var(--#{variable.$prefix}-btn-br-default);
+  --btn-border-dashed-color: var(--#{variable.$prefix}-btn-br-dashed);
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn {
+    --btn-color-dark::var(--btn-color)
+  }
+}
+
+@mixin changeColor($color: --btn-color-dark) {
+  color: var($color);
+  border-color: currentColor;
 }
 
 @mixin disabled() {
@@ -9,36 +34,31 @@
 }
 
 @mixin default() {
-  border: 1px solid var(--border-color);
-  --wave-color: #41b983;
+  border: 1px solid var(--btn-border-default-color);
+  color: var(--btn-color-dark);
   // focus-within属性 后代元素获取到了焦点 则会变成默认主题色
   &:not([disabled]):hover,
   &:not([disabled]):focus-within {
-    @include changeColor()
+    @include changeColor(--btn-primary-color);
   }
-
 }
 
-@mixin primary() {
-  color: var(--color);
-  background-color: var(--btn-color);
-
+@mixin colorAndBgcMixins($color, $bgColor) {
+  color: var(#{$color});
+  background-color: var(#{$bgColor});
 }
 
-
-.btn {
-  --wave-color: #fff;
-  --btn-color: #41b983;
-  --color: #fff;
-  --border-color: #dee2e6;
-
-  --danger-color: #ee8079;
-
-  --bg-color: #fff;
-
-  --flat-disabled-color: #3ecd79a8;
+@mixin primaryMixins($bgColor: --btn-bgc-color-success, $color: --btn-color-white) {
+  @include colorAndBgcMixins($color, $bgColor);
 }
 
+@mixin flatMixins($bgColor: --btn-bgc-color-default, $color: --btn-color-dark) {
+  @include colorAndBgcMixins($color, $bgColor);
+}
+
+@mixin gradientMixins($color: --btn-primary-color) {
+  background-image: radial-gradient(circle, var($color) 10%, transparent 10.01%);
+}
 
 .btn {
   display: inline-block;
@@ -54,7 +74,7 @@
   border: none;
   outline: none;
   border-radius: 0.25rem;
-  background-color: transparent;
+  background-color: var(--btn-bgc-color-default);
   transition: all 0.3s;
   overflow: hidden;
 
@@ -81,17 +101,13 @@
     left: var(--x, 0);
     top: var(--y, 0);
     pointer-events: none;
-    background-image: radial-gradient(
-                    circle,
-                    var(--wave-color, #fff) 10%,
-                    transparent 10.01%
-    );
     background-repeat: no-repeat;
     background-position: 50%;
     // scale关键
     transform: translate(-50%, -50%) scale(10);
     opacity: 0;
     transition: transform 0.3s, opacity 0.8s;
+    @include gradientMixins;
   }
 
   &:not([disabled]):active::after {
@@ -109,31 +125,33 @@
   }
 
   &__primary {
-    @include primary();
+    @include primaryMixins;
+    &::after {
+      @include gradientMixins(--btn-primary-active-color);
+    }
   }
 
   &__dashed {
     @include default();
-    border: 1px dashed var(--border-color);
+    border: 1px dashed var(--btn-border-dashed-color);
   }
 
   &__danger {
-    --btn-color: var(--danger-color);
-    @include primary();
+    @include primaryMixins(--btn-bgc-color-danger);
 
+    &::after {
+      @include gradientMixins(--btn-danger-active-color);
+    }
   }
 
   &__flat {
     transition: color 0.3s, background-color 0.5s;
-
     &:not([disabled]):hover {
-      color: var(--flat-disabled-color);
-      @include primary();
+      @include flatMixins(--btn-bgc-color-default, --flat-disabled-color);
     }
   }
 
   &--disabled {
-    @include disabled()
+    @include disabled();
   }
-
 }

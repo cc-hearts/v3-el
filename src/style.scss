@@ -1,0 +1,16 @@
+$prefix: cc-heart;
+@use '@/assets/scss/variables/_variable.scss';
+
+:root {
+  --#{variable.$prefix}-btn-primary: #65b787;
+
+  --#{variable.$prefix}-full-white: #fff;
+  --#{variable.$prefix}-full-dark: #000;
+  --#{variable.$prefix}-gray-color-1: #ccc;
+  --#{variable.$prefix}-btn-bgc-color-danger: #ee8079;
+  --#{variable.$prefix}-btn-bgc-color-success: var(--#{variable.$prefix}-btn-primary);
+  --#{variable.$prefix}-btn-color-white: var(--#{variable.$prefix}-full-white);
+  --#{variable.$prefix}-btn-color-dark: var(--#{variable.$prefix}-full-dark);
+  --#{variable.$prefix}-btn-br-dashed: var(--#{variable.$prefix}-gray-color-1);
+  --#{variable.$prefix}-btn-br-default: var(--#{variable.$prefix}-gray-color-1);
+}
