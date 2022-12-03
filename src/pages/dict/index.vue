@@ -1,5 +1,5 @@
 <template>
-  <Button @click="handleDialogAdd('添加字典')">添加字典</Button>
+  <Button type="primary" @click="handleDialogAdd('添加字典')">添加字典</Button>
   <TableView :border="true" :pageProps="searchObj" :columns="tableData.columns" :dataSource="tableData.list" :total="tableData.total" align="left">
     <template #status="{ row }">
       <el-switch :model-value="Boolean(row.status)" @change="handleChangeSwitch($event, row)" />

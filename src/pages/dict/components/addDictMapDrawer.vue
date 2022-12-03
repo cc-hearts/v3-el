@@ -1,6 +1,6 @@
 <template>
   <Drawer :model-value="modelValue" @update:model-value="toggleVisible">
-    <Button @click="handleDialogAdd('新增字典项')">添加字典项</Button>
+    <Button type="primary" @click="handleDialogAdd('新增字典项')">添加字典项</Button>
     <TableView :border="true" :pageProps="searchObj" :columns="tableData.columns" :dataSource="tableData.list" :total="tableData.total" align="left">
       <template #status="{ row }">
         <el-switch :model-value="Boolean(row.status)" @change="handleChangeSwitch($event, row)" />
