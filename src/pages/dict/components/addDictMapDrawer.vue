@@ -1,5 +1,5 @@
 <template>
-  <Drawer :model-value="modelValue" @update:model-value="toggleVisible">
+  <Drawer :size="width" :model-value="modelValue" @update:model-value="toggleVisible">
     <Button type="primary" @click="handleDialogAdd('新增字典项')">添加字典项</Button>
     <TableView :border="true" :pageProps="searchObj" :columns="tableData.columns" :dataSource="tableData.list" :total="tableData.total" align="left">
       <template #status="{ row }">
@@ -23,9 +23,10 @@ import { reactive, watch } from 'vue'
 import { deleteDictMap, getDictMapList, updateDictMap } from '@/apis/dict'
 import AddDictMapDialog from './addDictMapDialog.vue'
 import { successTip } from '@/utils'
-const props = withDefaults(defineProps<{ modelValue: boolean; row: Record<string, unknown> | null }>(), {
+const props = withDefaults(defineProps<{ modelValue: boolean; width?: string; row: Record<string, unknown> | null }>(), {
   modelValue: false,
-  row: null
+  row: null,
+  width: '50%'
 })
 
 const searchObj = useInitPagination()
