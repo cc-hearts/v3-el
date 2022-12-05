@@ -1,7 +1,9 @@
 {
   "cSpell.words": [
+    "commitlint",
     "pinia",
     "popconfirm",
+    "stylelint",
     "unplugin"
   ]
 }

@@ -1,17 +1,14 @@
 <template>
-  <el-input
-    v-if="item.type === 'input'"
-    :model-value="value"
-    @update:modelValue="forwardEvent"
-    :placeholder="placeholder"
-    :disabled="item.disabled"
-  />
-  <el-switch v-else-if="item.type === 'switch'" :model-value="value" @update:modelValue="forwardEvent" />
+  <el-input v-if="item.type === 'input'" :model-value="value" @update:modelValue="forwardEvent"
+    :placeholder="placeholder" :disabled="item.disabled" />
+  <el-switch v-else-if="item.type === 'switch'" :size="item.size || defaultSize" :model-value="value"
+    @update:modelValue="forwardEvent" />
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { formItem } from '@/types'
+import { getCurrentSize } from '@/config/ui';
 const { item } = withDefaults(defineProps<{ item: formItem; value: any }>(), {
   value: ''
 })
@@ -32,4 +29,8 @@ function forwardEvent(event: unknown) {
     field: item.field
   })
 }
+
+const defaultSize = computed(() => {
+  return getCurrentSize()
+})
 </script>

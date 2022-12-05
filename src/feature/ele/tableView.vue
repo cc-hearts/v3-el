@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import Table from './table.vue'
 import Pagination from './pagination.vue'
-import { PAGE_SIZE, OFFSET } from '@/config/base'
+import { PAGE_SIZE, OFFSET } from '@/config/ui'
 import type { tableViewProps } from '@/types/index'
 import { reactive, useSlots } from 'vue'
 
@@ -23,8 +23,8 @@ const props = withDefaults(
     total: tableViewProps['total']
     columns: tableViewProps['columns']
     dataSource: tableViewProps['dataSource']
-    align: tableViewProps['align']
-    border: tableViewProps['border']
+    align?: tableViewProps['align']
+    border?: tableViewProps['border']
   }>(),
   {
     total: 0,

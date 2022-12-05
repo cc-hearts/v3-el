@@ -1,4 +1,7 @@
+import { size } from "../base"
+
 export interface formItem {
+  size?: size
   slot?: string
   field: string
   label: string

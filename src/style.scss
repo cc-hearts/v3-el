@@ -14,3 +14,7 @@ $prefix: cc-heart;
   --#{variable.$prefix}-btn-br-dashed: var(--#{variable.$prefix}-gray-color-1);
   --#{variable.$prefix}-btn-br-default: var(--#{variable.$prefix}-gray-color-1);
 }
+
+html {
+  font-size: 14px;
+}

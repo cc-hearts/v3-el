@@ -2,6 +2,7 @@ export interface columns {
   width?: number | string
   title: string
   field: string
+  fixed?: 'left' | 'right'
   align?: 'left' | 'center' | 'right'
   slot?: { name: string }
 }

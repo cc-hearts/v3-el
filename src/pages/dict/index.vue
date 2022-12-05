@@ -1,5 +1,7 @@
 <template>
-  <Button type="primary" @click="handleDialogAdd('添加字典')">添加字典</Button>
+  <div class="operation-wrapper">
+    <Button type="primary" @click="handleDialogAdd('添加字典')">添加字典</Button>
+  </div>
   <TableView :border="true" :pageProps="searchObj" :columns="tableData.columns" :dataSource="tableData.list" :total="tableData.total" align="left">
     <template #status="{ row }">
       <el-switch :model-value="Boolean(row.status)" @change="handleChangeSwitch($event, row)" />
@@ -78,3 +80,8 @@ function handleDelete({ id }: { id: number }) {
   })
 }
 </script>
+
+
+<style lang="scss">
+@import "@/assets/scss/pages/operation.scss"
+</style>
