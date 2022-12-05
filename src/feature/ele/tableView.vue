@@ -1,6 +1,5 @@
 <template>
   <Table :columns="props.columns" :data-source="dataSource" :align="props.align" :border="props.border">
-    <!--  -->
     <template v-for="n in slotsKeys" v-slot:[n]="data">
       <slot :name="n" v-bind="data"></slot>
     </template>
