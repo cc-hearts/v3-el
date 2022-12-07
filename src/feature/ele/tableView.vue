@@ -1,5 +1,5 @@
 <template>
-  <Table :columns="props.columns" :data-source="dataSource" :align="props.align" :border="props.border">
+  <Table :columns="props.columns" :data-source="dataSource" :align="props.align" :border="props.border" :loading="props.loading">
     <template v-for="n in slotsKeys" v-slot:[n]="data">
       <slot :name="n" v-bind="data"></slot>
     </template>
@@ -25,6 +25,7 @@ const props = withDefaults(
     dataSource: tableViewProps['dataSource']
     align?: tableViewProps['align']
     border?: tableViewProps['border']
+    loading?: tableViewProps['loading']
   }>(),
   {
     total: 0,

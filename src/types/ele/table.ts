@@ -12,4 +12,5 @@ export interface tableProps<T = any> {
   dataSource: Array<T>
   border: boolean
   align: 'left' | 'center' | 'right'
+  loading: boolean
 }

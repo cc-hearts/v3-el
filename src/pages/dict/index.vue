@@ -2,7 +2,7 @@
   <div class="operation-wrapper">
     <Button type="primary" @click="handleDialogAdd('添加字典')">添加字典</Button>
   </div>
-  <TableView :border="true" :pageProps="searchObj" :columns="tableData.columns" :dataSource="tableData.list" :total="tableData.total" align="left">
+  <TableView :border="true" :pageProps="searchObj" align="left" v-bind="tableData">
     <template #status="{ row }">
       <el-switch :model-value="Boolean(row.status)" @change="handleChangeSwitch($event, row)" />
     </template>
@@ -37,9 +37,10 @@ import { successTip } from '@/utils/index'
 const searchObj = useInitPagination()
 
 const tableData = reactive<any>({
-  list: [],
+  dataSource: [],
   total: 0,
-  columns: []
+  columns: [],
+  loading: false
 })
 
 const { drawerProps, toggleDrawerVisible, handleChange } = useInitDrawerProps('字典项管理')
@@ -47,15 +48,20 @@ const { dialogProps, toggleDialogVisible, handleDialogAdd, handleDialogEdit, wat
 
 watchHiddenInitStatus()
 function getData() {
-  getDictList(searchObj).then((res) => {
-    if (res.data) {
-      const { list, total, columns } = res.data
-      useAddRow(columns)
-      tableData.columns = columns
-      tableData.total = total
-      tableData.list = list
-    }
-  })
+  tableData.loading = true
+  getDictList(searchObj)
+    .then((res) => {
+      if (res.data) {
+        const { list, total, columns } = res.data
+        useAddRow(columns)
+        tableData.columns = columns
+        tableData.total = total
+        tableData.dataSource = list
+      }
+    })
+    .finally(() => {
+      tableData.loading = false
+    })
 }
 onMounted(() => {
   getData()
@@ -81,7 +87,6 @@ function handleDelete({ id }: { id: number }) {
 }
 </script>
 
-
 <style lang="scss">
-@import "@/assets/scss/pages/operation.scss"
+@import '@/assets/scss/pages/operation.scss';
 </style>

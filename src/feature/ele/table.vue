@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="dataSource" :border="border">
+  <el-table :data="dataSource" :border="border" v-loading="loading">
     <template v-for="item in columns">
       <el-table-column
         :prop="item.field"
@@ -25,6 +25,7 @@ withDefaults(
     dataSource: tableProps['dataSource']
     border?: tableProps['border']
     align?: tableProps['align']
+    loading?: tableProps['loading']
   }>(),
   {
     columns() {
@@ -34,7 +35,8 @@ withDefaults(
       return []
     },
     border: false,
-    align: 'left'
+    align: 'left',
+    loading: false
   }
 )
 </script>

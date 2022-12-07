@@ -2,7 +2,7 @@ import { paginationBase } from '@/types'
 import { Get, Post, Delete, Put } from '@/utils/request'
 import type { requestTableData } from '@/types/baseResponse'
 import { addDictInstance } from '@/types/dict'
-const token = '97ffdff3e77875bdfb7e5abebba97392'
+const token = '900da29ea2a68d8963f1c624f259b255'
 export function getDictList(data: paginationBase) {
   return Get<requestTableData>('api/dict/getDictList', data, {
     headers: {
